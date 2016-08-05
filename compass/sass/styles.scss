@@ -1,0 +1,58 @@
+@import 'configs/variables';
+@import 'components/misc';
+@import 'layout/header';
+@import 'layout/footer';
+
+body{
+    width: 100%;
+    margin: 0px;
+    background-color: $mainBgColor;
+    
+    .dropdown-options{
+        display: inline-block;
+        select {
+            background-color: #30ABAF;
+            color: white;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        }
+
+        option:hover, option:focus {
+            background-color: #3DE1E3;
+        }
+    }
+
+
+    .container{
+        width: $width;
+        overflow: hidden;
+        &.after-header{
+            padding-top: 30px;
+        }
+        .col{
+            width: getColumnWidth($width, $numColumns, $margin);
+            margin: auto $margin;
+            float: left;
+            @extend .base-font;
+            color: #000;
+            .thumbnail{
+                display: block;
+                padding: 4px;
+                line-height: 0;
+                background-color: #F98C62;
+                border: 1px solid #F95662;
+                border-radius: 4px;
+                -webkit-transition: border .2s ease-in-out;
+                -o-transition: border .2s ease-in-out;
+                transition: border .2s ease-in-out;
+            }
+            img{
+                height: 400px;
+                width: 100%;
+            }
+        }
+    }
+}
