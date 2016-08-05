@@ -2,16 +2,22 @@
 <html>
 <head>
     <title>Movie App - jQuery/SASS Style</title>
+    <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/styles.css">
     <script   src="https://code.jquery.com/jquery-2.2.4.js"   integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="   crossorigin="anonymous"></script>
     <script type="text/javascript" src="js/scripts.js"></script>
 </head>
 <body>
+    <div class="video">
+        <div class="moreTrailers"></div>
+    </div>
     <div class="dropdown-options">
         <h3>Genres</h3>
         <select id="listGenre"></select>
         <h3>Sort By</h3>
         <select id="sortOptions">
+        <div id="movie"></div>
+            <option></option>
             <option value="np">Now Playing</option>
             <option value="pop">Popular</option>
             <option value="tr">Top Rated</option>
