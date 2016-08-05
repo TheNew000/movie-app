@@ -69,26 +69,33 @@ body .dropdown-options select {
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
 }
 /* line 23, ../compass/sass/styles.scss */
-body .dropdown-options option:hover, body .dropdown-options option:focus {
-  background-color: #3DE1E3;
+body .dropdown-options option {
+  color: #3DE1E3;
 }
-/* line 29, ../compass/sass/styles.scss */
+/* line 27, ../compass/sass/styles.scss */
+body .dropdown-options #newSearch {
+  color: white;
+  background-color: #30ABAF;
+  border-color: #30ABAF;
+  border-radius: 4px;
+}
+/* line 37, ../compass/sass/styles.scss */
 body .container {
   width: 1200px;
   overflow: hidden;
 }
-/* line 32, ../compass/sass/styles.scss */
+/* line 40, ../compass/sass/styles.scss */
 body .container.after-header {
   padding-top: 30px;
 }
-/* line 35, ../compass/sass/styles.scss */
+/* line 43, ../compass/sass/styles.scss */
 body .container .col {
   width: 280px;
   margin: auto 10px;
   float: left;
   color: #000;
 }
-/* line 41, ../compass/sass/styles.scss */
+/* line 49, ../compass/sass/styles.scss */
 body .container .col .thumbnail {
   display: block;
   padding: 4px;
@@ -100,7 +107,7 @@ body .container .col .thumbnail {
   -o-transition: border .2s ease-in-out;
   transition: border .2s ease-in-out;
 }
-/* line 52, ../compass/sass/styles.scss */
+/* line 60, ../compass/sass/styles.scss */
 body .container .col img {
   height: 400px;
   width: 100%;
