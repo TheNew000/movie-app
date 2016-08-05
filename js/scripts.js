@@ -114,6 +114,7 @@ $(document).ready(function(){
     function createVideo(ID, title, backDrop){
         $.getJSON(apiBaseUrl + 'movie/' + ID + '/videos' + apiKey, function(videoIdData){  
              populateVideo(videoIdData.results, title, backDrop);
+             console.log(videoIdData);
         });
     }
 
@@ -123,7 +124,7 @@ $(document).ready(function(){
         var nextVidOption = '';
         for (var i = 0; i < videoArr.length; i++) {
             if(videoArr[i] == videoArr[0]){
-                newVidHTML += '<iframe width="' + videoArr[0].size + 'px" height="100%" src="https://www.youtube.com/embed/' + videoArr[0].key + 'frameborder="0" allowfullscreen></iframe>';
+                newVidHTML += '<iframe width="560px" height="316px" src="https://www.youtube.com/embed/' + videoArr[0].key + '" frameborder="0" allowfullscreen></iframe>';
             }else{
                 nextVidOption += '<button id="' + videoArr[i].id + '"class="another"> Watch Another? Trailer:' + (i + 1) + '</button>';  
             }
@@ -144,7 +145,7 @@ $(document).ready(function(){
         var nextVidOption = '';
         for (var i = 0; i < arr.length; i++) {
             if(id == arr[i].id){
-                newVidHTML += '<iframe width="' + arr[i].size + '" height="auto" src="https://www.youtube.com/embed/' + arr[i].key + 'frameborder="0" allowfullscreen></iframe>';
+                newVidHTML += '<iframe width="560px" height="316px" src="https://www.youtube.com/embed/' + arr[i].key + 'frameborder="0" allowfullscreen></iframe>';
             }else{
                 nextVidOption += '<button id="' + arr[i].id + '"class="another" name="' + arr[i].name + '"> Watch Another? Trailer: ' + (i + 1) + '</button>';
             }
