@@ -73,7 +73,7 @@ body .dropdown-options option {
   color: #3DE1E3;
 }
 /* line 27, ../compass/sass/styles.scss */
-body .dropdown-options #newSearch {
+body .dropdown-options #reset {
   color: white;
   background-color: #30ABAF;
   border-color: #30ABAF;

@@ -157,5 +157,11 @@ $(document).ready(function(){
             event.preventDefault();
             nextVideo(this.id, arr, title, this.name);
         });
-    }    
+    }  
+
+    $('#reset').click(function(event){
+        event.preventDefault();
+        console.log('here');
+        $('.poster-grid').empty();
+    }); 
 });
