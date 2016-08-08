@@ -38,6 +38,7 @@ $.getJSON(apiBaseUrl + upUrl + apiKey, function(upData){
     upObject = upData;
 });
 
+
 $(document).ready(function(){
 
     $.getJSON(apiBaseUrl + genreList + apiKey, function(genreData){  
@@ -80,7 +81,6 @@ $(document).ready(function(){
     }
 
     function populateGrid(data){
-        console.log(data);
         var newHTML = '';
             for (var i = 0; i < data.results.length; i++) {
                 var idNum = '';
@@ -91,7 +91,7 @@ $(document).ready(function(){
                     newHTML +=  data.results[i].title;
                     var BDUrl = imageBaseUrl + 'w300' + data.results[i].backdrop_path;
                     var posterUrl = imageBaseUrl + 'w300' + data.results[i].poster_path;
-                    newHTML += '<a href="#" class="thumbnail" id="' + data.results[i].id + '" title="' + data.results[i].title + '" bd="' + BDUrl + '"><img src="' + posterUrl + '"></a>';
+                    newHTML += '<a href="#modal" class="thumbnail" id="' + data.results[i].id + '" title="' + data.results[i].title + '" bd="' + BDUrl + '"><img src="' + posterUrl + '"></a>';
                     var genreIdNum = data.results[i].genre_ids;
                     newHTML += genreID(genreIdNum); 
                 newHTML += '</div>';
@@ -99,213 +99,156 @@ $(document).ready(function(){
 
             $('.poster-grid').html(newHTML);
             $('.thumbnail').click(function(event){
-                event.preventDefault();
-                createVideo(this.id, this.title, this.attributes[4].value);
+                createRemodal(this.id, this.title, this.attributes[4].value);
             });
     }
 
     function createIdGrid(ID){
-        $.getJSON(apiBaseUrl + 'genre/' + ID + '/movies' + apiKey, function(genreIdData){  
-            console.log(genreIdData);
+        $.getJSON(apiBaseUrl + 'genre/' + ID + '/movies' + apiKey, function(genreIdData){
             populateGrid(genreIdData);
         });
     }
 
-    function createVideo(ID, title, backDrop){
-        $.getJSON(apiBaseUrl + 'movie/' + ID + '/videos' + apiKey, function(videoIdData){  
-             populateVideo(videoIdData.results, title, backDrop);
-             console.log(videoIdData);
+    function createRemodal(ID, title, backDrop){
+
+        $.getJSON(apiBaseUrl + 'movie/' + ID + '/videos' + apiKey, function(videoIdData){
+             populateVidModal(videoIdData.results, title, backDrop);
+        });
+
+        $.getJSON(apiBaseUrl + 'movie/' + ID + '/similar' + apiKey, function(similarData){
+            $('#similar').click(function(event){
+                populateGrid(similarData);
+            });
+        });
+
+        $.getJSON(apiBaseUrl + 'movie/' + ID + '/reviews' + apiKey, function(reviewsData){
+            $('#reviews').click(function(event){
+                populateReviews(reviewsData);
+            })
+        });
+
+        $.getJSON(apiBaseUrl + 'movie/' + ID + '/images' + apiKey, function(imagesData){
+            $('#images').click(function(event){
+                populateImgBtns(imagesData);
+            })
+        });
+
+        $.getJSON(apiBaseUrl + 'movie/' + ID + apiKey, function(imdbData){
+            $('#IMDB').click(function(event){
+                location.href = "http://www.imdb.com/title/" + imdbData.imdb_id + "/?ref_=nv_sr_1";
+            })
+        });
+
+
+    }
+
+    function populateImgBtns(data){
+        var newHTML = '';
+        var vidID = data.id;
+        if (data.backdrops && data.posters) {
+            newHTML += '<button id="backdrops" class="moreImages">See More BackDrops?</button><button id="posters" class="moreImages">See More Posters?</button>';
+        }else if(data.backdrops && !data.posters){
+            newHTML += '<button id="backdrops" class="moreImages">See More BackDrops?</button>';
+        }else if(!data.backdrops && data.posters){
+            newHTML += '<button id="posters" class="moreImages">See More Posters?</button>';
+        }else{
+            return alert('There are no more images at this time!');
+        }
+        $('.poster-grid').html(newHTML);
+        $('.moreImages').click(function(){
+            populateImages(data, this.id);
         });
     }
 
-    function populateVideo(videoArr, title, backDrop){
+    function populateImages(data, imageArr){
+        var newHTML = '';
+        for(prop in data){
+            if(prop == imageArr){
+                var arr = data[prop];
+            }
+        }
+        if(imageArr == "posters"){
+            newHTML += '<button id="backdrops" class="toggleImages">See BackDrops?</button>';
+        }else if(imageArr == "backdrops"){
+            newHTML += '<button id="posters" class="toggleImages">See Posters?</button>';
+        }
+        for (var i = 0; i < arr.length; i++) {
+                newHTML += '<div class="col">';
+                    var imageUrl = imageBaseUrl + 'w300' + arr[i].file_path;
+                    newHTML += '<a href="#modal" class="thumbnail"><img src="' + imageUrl + '"></a>';
+                newHTML += '</div>';
+        }
+        $('.poster-grid').html(newHTML);
+        $('.thumbnail').click(function(){
+            ('.vid-title').html('<img src="' + imageUrl + '"></a>');
+        });
+        $('.toggleImages').click(function(){
+            populateImages(data, this.id);
+        });
+    }
+
+    function populateReviews(data){
+        var newHTML = '';
+        var vidID = data.id;
+        if(data.results.length > 0){
+            for (var i = 0; i < data.results.length; i++) {
+                newHTML += '<div class="col ' + vidID + '">';
+                    newHTML +=  '<a href="' + data.results[i].url + '">Review By: ' + data.results[i].author + '</a>';
+                    newHTML += '<div class="review-content">' + data.results[i].content + '</div>';
+                newHTML += '</div>';
+            }
+            $('.poster-grid').html(newHTML);
+        }else{
+            alert('Sorry, there are no reviews at this time!');
+        }
+    }
+
+    function populateVidModal(videoArr, title, backDrop){
         var newVidHTML = '';
-        var vidTitleHTML = '<h1>' + title + '</h1><h3>' + videoArr[0].name + '</h3><img src="' + backDrop + '">';
+        var vidTitleHTML = '<h1>' + title + '</h1>';
+        var vidName = '<h3>' + videoArr[0].name + '</h3>';
+        // var backDropImage = '<img src="' + backDrop + '">';
         var nextVidOption = '';
         for (var i = 0; i < videoArr.length; i++) {
             if(videoArr[i] == videoArr[0]){
-                newVidHTML += '<iframe width="560px" height="316px" src="https://www.youtube.com/embed/' + videoArr[0].key + '" frameborder="0" allowfullscreen></iframe>';
+                newVidHTML += vidName + '<iframe src="https://www.youtube.com/embed/' + videoArr[0].key + '" frameborder="0" allowfullscreen></iframe>';
             }else{
-                nextVidOption += '<button id="' + videoArr[i].id + '"class="another"> Watch Another? Trailer:' + (i + 1) + '</button>';  
+                nextVidOption += '<button id="' + videoArr[i].id + '" class="another" name="' + videoArr[i].name + '" width="50%">Watch Another? Trailer:' + (i + 1) + '</button>';  
             }
         }
+        $('.videoBD').html('<img src="' + backDrop + '">');
+        $('.vidButtons').html(nextVidOption);
         $('.video').html(newVidHTML);
         $('.vid-title').html(vidTitleHTML);
-        $('.moreTrailers').html(nextVidOption);
 
         $('.another').click(function(event){
-            event.preventDefault();
-            nextVideo(this.id, videoArr, title, videoArr[0].name, backDrop);
+            nextVideo(this.id, videoArr, this.name);
         });
     }
 
-    function nextVideo(id, arr, title, name, backDrop){
+    function nextVideo(id, arr, name){
         var newVidHTML = '';
-        var vidTitleHTML = '<h1>' + title + '</h1><h3>' + name + '</h3><img src="' + backDrop + '">';
+        var vidName = '<h3>' + name + '</h3>';
         var nextVidOption = '';
         for (var i = 0; i < arr.length; i++) {
             if(id == arr[i].id){
-                newVidHTML += '<iframe width="560px" height="316px" src="https://www.youtube.com/embed/' + arr[i].key + 'frameborder="0" allowfullscreen></iframe>';
+                newVidHTML += vidName + '<iframe src="https://www.youtube.com/embed/' + arr[i].key + '" frameborder="0" allowfullscreen></iframe>';
             }else{
-                nextVidOption += '<button id="' + arr[i].id + '"class="another" name="' + arr[i].name + '"> Watch Another? Trailer: ' + (i + 1) + '</button>';
+                nextVidOption += '<button id="' + arr[i].id + '"class="another" name="' + arr[i].name + '" width="50%"> Watch Another? Trailer: ' + (i + 1) + '</button>';
             }
         }
         $('.video').html(newVidHTML);
-        $('.vid-title').html(vidTitleHTML);
-        $('.moreTrailers').html(nextVidOption);
+        $('.vidButtons').html(nextVidOption);
 
         $('.another').click(function(event){
-            event.preventDefault();
-            nextVideo(this.id, arr, title, this.name);
+            nextVideo(this.id, arr, this.name);
         });
     }  
 
     $('#reset').click(function(event){
         event.preventDefault();
-        console.log('here');
         $('.poster-grid').empty();
     }); 
 
 });
 
-// Create an immediately invoked functional expression to wrap our code
-    (function() {
-
-      // Define our constructor
-      this.Modal = function() {
-
-        // Create global element references
-        this.closeButton = null;
-        this.modal = null;
-        this.overlay = null;
-
-        // Determine proper prefix
-        this.transitionEnd = transitionSelect();
-
-        // Define option defaults
-        var defaults = {
-          className: 'fade-and-drop',
-          closeButton: true,
-          content: "",
-          maxWidth: 600,
-          minWidth: 280,
-          overlay: true
-        }
-
-        // Create options by extending defaults with the passed in arugments
-        if (arguments[0] && typeof arguments[0] === "object") {
-          this.options = extendDefaults(defaults, arguments[0]);
-        }
-
-      }
-
-      // Public Methods
-
-      Modal.prototype.close = function() {
-        var _ = this;
-        this.modal.className = this.modal.className.replace(" scotch-open", "");
-        this.overlay.className = this.overlay.className.replace(" scotch-open",
-          "");
-        this.modal.addEventListener(this.transitionEnd, function() {
-          _.modal.parentNode.removeChild(_.modal);
-        });
-        this.overlay.addEventListener(this.transitionEnd, function() {
-          if(_.overlay.parentNode) _.overlay.parentNode.removeChild(_.overlay);
-        });
-      }
-
-      Modal.prototype.open = function() {
-        buildOut.call(this);
-        initializeEvents.call(this);
-        window.getComputedStyle(this.modal).height;
-        this.modal.className = this.modal.className +
-          (this.modal.offsetHeight > window.innerHeight ?
-            " scotch-open scotch-anchored" : " scotch-open");
-        this.overlay.className = this.overlay.className + " scotch-open";
-      }
-
-      // Private Methods
-
-      function buildOut() {
-
-        var content, contentHolder, docFrag;
-
-        /*
-         * If content is an HTML string, append the HTML string.
-         * If content is a domNode, append its content.
-         */
-
-        if (typeof this.options.content === "string") {
-          content = this.options.content;
-        } else {
-          content = this.options.content.innerHTML;
-        }
-
-        // Create a DocumentFragment to build with
-        docFrag = document.createDocumentFragment();
-
-        // Create modal element
-        this.modal = document.createElement("div");
-        this.modal.className = "scotch-modal " + this.options.className;
-        this.modal.style.minWidth = this.options.minWidth + "px";
-        this.modal.style.maxWidth = this.options.maxWidth + "px";
-
-        // If closeButton option is true, add a close button
-        if (this.options.closeButton === true) {
-          this.closeButton = document.createElement("button");
-          this.closeButton.className = "scotch-close close-button";
-          this.closeButton.innerHTML = "×";
-          this.modal.appendChild(this.closeButton);
-        }
-
-        // If overlay is true, add one
-        if (this.options.overlay === true) {
-          this.overlay = document.createElement("div");
-          this.overlay.className = "scotch-overlay " + this.options.className;
-          docFrag.appendChild(this.overlay);
-        }
-
-        // Create content area and append to modal
-        contentHolder = document.createElement("div");
-        contentHolder.className = "scotch-content";
-        contentHolder.innerHTML = content;
-        this.modal.appendChild(contentHolder);
-
-        // Append modal to DocumentFragment
-        docFrag.appendChild(this.modal);
-
-        // Append DocumentFragment to body
-        document.body.appendChild(docFrag);
-
-      }
-
-      function extendDefaults(source, properties) {
-        var property;
-        for (property in properties) {
-          if (properties.hasOwnProperty(property)) {
-            source[property] = properties[property];
-          }
-        }
-        return source;
-      }
-
-      function initializeEvents() {
-
-        if (this.closeButton) {
-          this.closeButton.addEventListener('click', this.close.bind(this));
-        }
-
-        if (this.overlay) {
-          this.overlay.addEventListener('click', this.close.bind(this));
-        }
-
-      }
-
-      function transitionSelect() {
-        var el = document.createElement("div");
-        if (el.style.WebkitTransition) return "webkitTransitionEnd";
-        if (el.style.OTransition) return "oTransitionEnd";
-        return 'transitionend';
-      }
-
-    }());
