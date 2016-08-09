@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html ng-app="movieApp">
+<head>
+    <title></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
+
+
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="js/movieAngular.js"></script>
+    
+</head>
+<body ng-controller="movieController">
+    <div class="container container-fluid">
+    <div class="row">
+        <div class="well">
+            <form class="form-group" ng-submit="getMovieStuff()">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="form-control input-lg" ng-model="userChoice" placeholder="Search Here">
+                        </div>
+                    </div>
+                </div>
+                <div id="searchOptions" class="dropdown col-md-2">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Search By: <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dLabel">  
+                        <li ng-click="searchOption('collection?')"><a href="#">Collection</a></li>
+                        <li ng-click="searchOption('movie?')"><a href="#">Movie</a></li>
+                        <li ng-click="searchOption('multi?')"><a href="#">Everything</a></li>
+                        <li ng-click="searchOption('tv?')"><a href="#">TV</a></li>
+                    </ul>
+                </div>
+                <button class="btn btn-lg btn-primary">Find Movies</button>
+            </form>
+            <div id="searchOptions" class="dropdown col-md-2">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dLabel2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Genre List: <span class="caret"></span></button>
+
+                <ul class="dropdown-menu" aria-labelledby="dLabel2">  
+                    <li ng-repeat="genre in genreArray track by $index" ng-click="genreSearch('{{genre.id}}')"><a href="#">{{genre.name}}</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+        <div ng-if="userChoice" class="row">
+            <div ng-repeat="movie in movieArray" class="col-sm-3 movie-poster">
+                <img ng-src="{{imagePath}}{{movie.poster_path}}">
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
